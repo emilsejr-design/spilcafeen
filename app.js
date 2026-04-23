@@ -142,22 +142,23 @@ function showGameDialog(game) {
   content.innerHTML = `
     <h2>${game.title}</h2>
     
-    <button class="like-button" id="like-btn" title="Like dette spil">❤</button>
+    <button type="button" class="like-button" id="like-btn" title="Like dette spil">❤</button>
+
 
 
     <img src="${game.image}" style="width:100%; max-height: 300px; object-fit: contain; margin-bottom:10px; border-radius: 8px;" />
 
     <div class="game-details">
-    <p><strong>Genre:</strong> ${genres}</p>
-    <p><strong>Spillere:</strong> ${players}</p>
-    <p><strong>Alder:</strong> ${game.age}+</p>
+        <p><strong>Genre:</strong> ${genres}</p>
+        <p><strong>Spillere:</strong> ${players}</p>
+            <p><strong>Alder:</strong> ${game.age}+</p>
     <p><strong>Spilletid:</strong> ${game.playtime} min</p>
     <p><strong>Sprog:</strong> ${game.language}</p>
     <p><strong>Sværhedsgrad:</strong> ${game.difficulty}</p>
     <p><strong>Rating:</strong> ${game.rating}</p>
     <p><strong>Lokation:</strong> ${game.location}</p>
     <p><strong>Hylde:</strong> ${game.shelf}</p>
-    <p><strong>Beskrivelse:</strong> ${game.description}</p>
+        <p><strong>Beskrivelse:</strong> ${game.description}</p>
     </div>
   `;
 
