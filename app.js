@@ -21,7 +21,8 @@ async function fetchGames() {
 function populateGenreSelect() {
   const genres = new Set();
 
-  for (const game of allgames) {
+  // Fix 1: "allgames" → "allGames"
+  for (const game of allGames) {
     for (const genre of game.genre) {
       genres.add(genre);
     }
@@ -42,7 +43,8 @@ function applyFiltersAndSort() {
   const searchValue = searchInput.value.trim().toLowerCase();
   const sortOption = sortSelect.value;
 
-  let filteredMovies = allGames.filter(function (game) {
+  // Fix 2: "filteredMovies" → "filteredGames"
+  let filteredGames = allGames.filter(function (game) {
     const matchesGenre =
       selectedGenre === "all" || game.genre.includes(selectedGenre);
     const matchesSearch = game.title.toLowerCase().includes(searchValue);
@@ -51,21 +53,22 @@ function applyFiltersAndSort() {
   });
 
   if (sortOption === "title") {
-    filteredMovies.sort(function (gameA, gameB) {
+    filteredGames.sort(function (gameA, gameB) {
       return gameA.title.localeCompare(gameB.title);
     });
   } else if (sortOption === "year") {
-    filteredMovies.sort(function (gameA, gameB) {
+    filteredGames.sort(function (gameA, gameB) {
       return gameB.year - gameA.year;
     });
-  } 
+  }
 
   showGames(filteredGames);
 }
 
 function showGames(games) {
   gameList.innerHTML = "";
-  gameCount.textContent = `Viser ${game.length} ud af ${allGames.length} spil`;
+  // Fix 4: "game.length" → "games.length"
+  gameCount.textContent = `Viser ${games.length} ud af ${allGames.length} spil`;
 
   if (games.length === 0) {
     gameList.innerHTML =
@@ -74,6 +77,39 @@ function showGames(games) {
   }
 
   for (const game of games) {
-    showGames(game);
+    // Fix 3: was calling showGames(game) recursively — now calls showGame (singular)
+    showGame(game);
   }
 }
+
+// Fix 3: renamed from showGames to showGame to avoid duplicate function name
+function showGame(game) {
+  const html = /* html */ `
+    <article class="game-card" tabindex="0">
+      <img src="${game.image}" alt="Poster af ${game.title}" class="game-poster" />
+      <div class="game-info">
+        <div class="title-row">
+          <h2>${game.title}</h2>
+          <span class="year-badge">(${game.year})</span>
+        </div>
+        <p class="genre">${game.genre.join(", ")}</p>
+        <p class="players">${game.players.join(", ")}</p>
+      </div>
+    </article>
+  `;
+
+  gameList.insertAdjacentHTML("beforeend", html);
+  const newCard = gameList.lastElementChild;
+  newCard.addEventListener("click", function () {
+    showGameDialog(game);
+  });
+  newCard.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      showGameDialog(game);
+    }
+  });
+}
+
+genreSelect.addEventListener("change", applyFiltersAndSort);
+searchInput.addEventListener("input", applyFiltersAndSort);
+sortSelect.addEventListener("change", applyFiltersAndSort);
