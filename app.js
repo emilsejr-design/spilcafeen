@@ -1,5 +1,8 @@
-"use strict"
-const GAMES_URL = "https://raw.githubusercontent.com/cederdorff/race/refs/heads/master/data/games.json"
+"use strict";
+
+const GAMES_URL =
+  "https://raw.githubusercontent.com/cederdorff/race/master/data/games.json";
+
 let allGames = [];
 
 const gameList = document.querySelector("#game-list");
@@ -11,29 +14,43 @@ const gameCount = document.querySelector("#game-count");
 fetchGames();
 
 async function fetchGames() {
-  const response = await fetch(GAMES_URL);
-  allGames = await response.json();
+  try {
+    const response = await fetch(GAMES_URL);
+    const data = await response.json();
 
-  populateGenreSelect();
-  applyFiltersAndSort();
+    console.log(data); // debug
+
+    allGames = data;
+
+    populateGenreSelect();
+    applyFiltersAndSort();
+  } catch (error) {
+    console.error("Fejl ved hentning:", error);
+  }
 }
 
 function populateGenreSelect() {
   const genres = new Set();
 
-  // Fix 1: "allgames" → "allGames"
   for (const game of allGames) {
-    for (const genre of game.genre) {
-      genres.add(genre);
+    // håndter både string og array
+    if (Array.isArray(game.genre)) {
+      for (const genre of game.genre) {
+        genres.add(genre);
+      }
+    } else {
+      genres.add(game.genre);
     }
   }
 
-  const sortedGenres = [...genres].sort((a, b) => a.localeCompare(b));
+  const sortedGenres = [...genres].sort((a, b) =>
+    a.localeCompare(b)
+  );
 
   for (const genre of sortedGenres) {
     genreSelect.insertAdjacentHTML(
       "beforeend",
-      `<option value="${genre}">${genre}</option>`,
+      `<option value="${genre}">${genre}</option>`
     );
   }
 }
@@ -43,23 +60,27 @@ function applyFiltersAndSort() {
   const searchValue = searchInput.value.trim().toLowerCase();
   const sortOption = sortSelect.value;
 
-  // Fix 2: "filteredMovies" → "filteredGames"
   let filteredGames = allGames.filter(function (game) {
+    const genres = Array.isArray(game.genre)
+      ? game.genre
+      : [game.genre];
+
     const matchesGenre =
-      selectedGenre === "all" || game.genre.includes(selectedGenre);
-    const matchesSearch = game.title.toLowerCase().includes(searchValue);
+      selectedGenre === "all" || genres.includes(selectedGenre);
+
+    const matchesSearch = game.title
+      .toLowerCase()
+      .includes(searchValue);
 
     return matchesGenre && matchesSearch;
   });
 
   if (sortOption === "title") {
-    filteredGames.sort(function (gameA, gameB) {
-      return gameA.title.localeCompare(gameB.title);
-    });
+    filteredGames.sort((a, b) =>
+      a.title.localeCompare(b.title)
+    );
   } else if (sortOption === "year") {
-    filteredGames.sort(function (gameA, gameB) {
-      return gameB.year - gameA.year;
-    });
+    filteredGames.sort((a, b) => b.year - a.year);
   }
 
   showGames(filteredGames);
@@ -67,7 +88,7 @@ function applyFiltersAndSort() {
 
 function showGames(games) {
   gameList.innerHTML = "";
-  // Fix 4: "game.length" → "games.length"
+
   gameCount.textContent = `Viser ${games.length} ud af ${allGames.length} spil`;
 
   if (games.length === 0) {
@@ -77,14 +98,20 @@ function showGames(games) {
   }
 
   for (const game of games) {
-    // Fix 3: was calling showGames(game) recursively — now calls showGame (singular)
     showGame(game);
   }
 }
 
-// Fix 3: renamed from showGames to showGame to avoid duplicate function name
 function showGame(game) {
-  const html = /* html */ `
+  const genres = Array.isArray(game.genre)
+    ? game.genre.join(", ")
+    : game.genre;
+
+  const players = Array.isArray(game.players)
+    ? game.players.join(", ")
+    : game.players;
+
+  const html = `
     <article class="game-card" tabindex="0">
       <img src="${game.image}" alt="Poster af ${game.title}" class="game-poster" />
       <div class="game-info">
@@ -92,17 +119,20 @@ function showGame(game) {
           <h2>${game.title}</h2>
           <span class="year-badge">(${game.year})</span>
         </div>
-        <p class="genre">${game.genre.join(", ")}</p>
-        <p class="players">${game.players.join(", ")}</p>
+        <p class="genre">${genres}</p>
+        <p class="players">${players}</p>
       </div>
     </article>
   `;
 
   gameList.insertAdjacentHTML("beforeend", html);
+
   const newCard = gameList.lastElementChild;
+
   newCard.addEventListener("click", function () {
     showGameDialog(game);
   });
+
   newCard.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       showGameDialog(game);
@@ -110,6 +140,37 @@ function showGame(game) {
   });
 }
 
+function showGameDialog(game) {
+  const dialog = document.querySelector("#game-dialog");
+  const content = document.querySelector("#dialog-content");
+
+  const genres = Array.isArray(game.genre)
+    ? game.genre.join(", ")
+    : game.genre;
+
+  const players = Array.isArray(game.players)
+    ? game.players.join(", ")
+    : game.players;
+
+  content.innerHTML = `
+    <h2>${game.title}</h2>
+    <p><strong>År:</strong> ${game.year}</p>
+    <p><strong>Genre:</strong> ${genres}</p>
+    <p><strong>Spillere:</strong> ${players}</p>
+    <img src="${game.image}" alt="${game.title}" style="width:100%;">
+  `;
+
+  dialog.showModal();
+}
+
+// luk dialog
+document
+  .querySelector("#close-dialog")
+  .addEventListener("click", function () {
+    document.querySelector("#game-dialog").close();
+  });
+
+// events
 genreSelect.addEventListener("change", applyFiltersAndSort);
 searchInput.addEventListener("input", applyFiltersAndSort);
 sortSelect.addEventListener("change", applyFiltersAndSort);
