@@ -6,9 +6,6 @@
     box-sizing: border-box;
 }
 
-/* RESPONSIVT DESIGN */
-
-
 
 /* BODY */
 body {
@@ -260,4 +257,19 @@ header p {
 /* Sørg for at dialogen er relativ, så X-knappen kan placeres absolut */
 #game-dialog form {
   position: relative;
+}
+
+
+
+/* RESPONSIVT DESIGN */
+@media only screen and (max-width: 600px) {...}
+
+/* Responsivt flex-box til navbar */
+@media (max-width: 600px) {
+  .controls {
+    flex-direction: column;
+  }
+  .logo {
+    display: none;
+  }
 }
