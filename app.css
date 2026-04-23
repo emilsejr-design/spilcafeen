@@ -33,6 +33,12 @@ header p {
   opacity: 0.9;
 }
 
+.logo{
+    position: absolute;
+    left: 1%;
+    top: 40px;
+}
+
 /* MAIN */
 
 /* Grid layout */
