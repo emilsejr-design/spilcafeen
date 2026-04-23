@@ -18,8 +18,6 @@ async function fetchGames() {
     const response = await fetch(GAMES_URL);
     const data = await response.json();
 
-    console.log(data); // debug
-
     allGames = data;
 
     populateGenreSelect();
@@ -33,10 +31,9 @@ function populateGenreSelect() {
   const genres = new Set();
 
   for (const game of allGames) {
-    // håndter både string og array
     if (Array.isArray(game.genre)) {
-      for (const genre of game.genre) {
-        genres.add(genre);
+      for (const g of game.genre) {
+        genres.add(g);
       }
     } else {
       genres.add(game.genre);
@@ -60,7 +57,7 @@ function applyFiltersAndSort() {
   const searchValue = searchInput.value.trim().toLowerCase();
   const sortOption = sortSelect.value;
 
-  let filteredGames = allGames.filter(function (game) {
+  let filteredGames = allGames.filter((game) => {
     const genres = Array.isArray(game.genre)
       ? game.genre
       : [game.genre];
@@ -93,7 +90,7 @@ function showGames(games) {
 
   if (games.length === 0) {
     gameList.innerHTML =
-      '<p class="empty">Ingen spil matcher din søgning eller genre.</p>';
+      '<p class="empty">Ingen spil matcher din søgning.</p>';
     return;
   }
 
@@ -107,20 +104,17 @@ function showGame(game) {
     ? game.genre.join(", ")
     : game.genre;
 
-  const players = Array.isArray(game.players)
-    ? game.players.join(", ")
-    : game.players;
+  const players = game.players
+    ? `${game.players.min}-${game.players.max} spillere`
+    : "Ukendt";
 
   const html = `
     <article class="game-card" tabindex="0">
-      <img src="${game.image}" alt="Poster af ${game.title}" class="game-poster" />
+      <img src="${game.image}" alt="${game.title}" class="game-poster" />
       <div class="game-info">
-        <div class="title-row">
-          <h2>${game.title}</h2>
-          <span class="year-badge">(${game.year})</span>
-        </div>
-        <p class="genre">${genres}</p>
+        <h2>${game.title}</h2>
         <p class="players">${players}</p>
+        <p class="genre">${genres}</p>
       </div>
     </article>
   `;
@@ -129,11 +123,9 @@ function showGame(game) {
 
   const newCard = gameList.lastElementChild;
 
-  newCard.addEventListener("click", function () {
-    showGameDialog(game);
-  });
+  newCard.addEventListener("click", () => showGameDialog(game));
 
-  newCard.addEventListener("keydown", function (event) {
+  newCard.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       showGameDialog(game);
     }
@@ -148,16 +140,26 @@ function showGameDialog(game) {
     ? game.genre.join(", ")
     : game.genre;
 
-  const players = Array.isArray(game.players)
-    ? game.players.join(", ")
-    : game.players;
+  const players = game.players
+    ? `${game.players.min}-${game.players.max} spillere`
+    : "Ukendt";
 
   content.innerHTML = `
     <h2>${game.title}</h2>
-    <p><strong>År:</strong> ${game.year}</p>
+    <img src="${game.image}" style="width:100%; margin-bottom:10px;" />
+
     <p><strong>Genre:</strong> ${genres}</p>
     <p><strong>Spillere:</strong> ${players}</p>
-    <img src="${game.image}" alt="${game.title}" style="width:100%;">
+    <p><strong>Alder:</strong> ${game.age}+</p>
+    <p><strong>Spilletid:</strong> ${game.playtime} min</p>
+    <p><strong>Sprog:</strong> ${game.language}</p>
+    <p><strong>Sværhedsgrad:</strong> ${game.difficulty}</p>
+    <p><strong>Rating:</strong> ${game.rating}</p>
+    <p><strong>Lokation:</strong> ${game.location}</p>
+    <p><strong>Hylde:</strong> ${game.shelf}</p>
+
+    <p><strong>Beskrivelse:</strong> ${game.description}</p>
+    <p><strong>Regler:</strong> ${game.rules}</p>
   `;
 
   dialog.showModal();
@@ -166,7 +168,7 @@ function showGameDialog(game) {
 // luk dialog
 document
   .querySelector("#close-dialog")
-  .addEventListener("click", function () {
+  .addEventListener("click", () => {
     document.querySelector("#game-dialog").close();
   });
 

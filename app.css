@@ -33,3 +33,48 @@ header p {
 }
 
 /* MAIN */
+
+/* Grid layout */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Hvert spilkort */
+.game-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.game-card:hover {
+  transform: scale(1.03);
+}
+
+/* Billeder mindre og ens */
+.game-poster {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+/* Tekst */
+.game-info {
+  padding: 10px;
+}
+
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.genre,
+.players {
+  font-size: 12px;
+  color: #555;
+}
