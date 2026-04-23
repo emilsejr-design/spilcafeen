@@ -136,18 +136,18 @@ function showGameDialog(game) {
   const dialog = document.querySelector("#game-dialog");
   const content = document.querySelector("#dialog-content");
 
-  const genres = Array.isArray(game.genre)
-    ? game.genre.join(", ")
-    : game.genre;
-
-  const players = game.players
-    ? `${game.players.min}-${game.players.max} spillere`
-    : "Ukendt";
+  const genres = Array.isArray(game.genre) ? game.genre.join(", ") : game.genre;
+  const players = game.players ? `${game.players.min}-${game.players.max} spillere` : "Ukendt";
 
   content.innerHTML = `
     <h2>${game.title}</h2>
-    <img src="${game.image}" style="width:100%; margin-bottom:10px;" />
+    
+    <button class="like-button" id="like-btn" title="Like dette spil">❤</button>
 
+
+    <img src="${game.image}" style="width:100%; max-height: 300px; object-fit: contain; margin-bottom:10px; border-radius: 8px;" />
+
+    <div class="game-details">
     <p><strong>Genre:</strong> ${genres}</p>
     <p><strong>Spillere:</strong> ${players}</p>
     <p><strong>Alder:</strong> ${game.age}+</p>
@@ -157,10 +157,15 @@ function showGameDialog(game) {
     <p><strong>Rating:</strong> ${game.rating}</p>
     <p><strong>Lokation:</strong> ${game.location}</p>
     <p><strong>Hylde:</strong> ${game.shelf}</p>
-
     <p><strong>Beskrivelse:</strong> ${game.description}</p>
-    <p><strong>Regler:</strong> ${game.rules}</p>
+    </div>
   `;
+
+  // Logik til at skifte hjertefarve
+  const likeBtn = content.querySelector("#like-btn");
+  likeBtn.addEventListener("click", () => {
+    likeBtn.classList.toggle("liked");
+  });
 
   dialog.showModal();
 }
