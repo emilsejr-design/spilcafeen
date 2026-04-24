@@ -94,16 +94,15 @@ header p {
   display: flex;
   justify-content: center;
   padding: 10px;
-  color: #000000;
+  color: #181818;
   background-color: rgba(0, 0, 0, 0.1);
   border-top: 3px solid rgba(0, 0, 0, 0.01);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 
 
 /* MAIN */
-
 /* Grid layout */
 .game-grid {
   display: grid;
@@ -111,7 +110,6 @@ header p {
   gap: 20px;
   padding: 20px;
 }
-
 /* Hvert spilkort */
 .game-card {
   background: white;
