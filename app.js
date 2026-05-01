@@ -1,16 +1,19 @@
 "use strict";
 
+// ===== GLOBALE VARIABLER OG KONSTANTER =====
 const GAMES_URL =
   "https://raw.githubusercontent.com/cederdorff/race/master/data/games.json";
 
 let allGames = [];
 
+// ===== DOM-ELEMENTER =====
 const gameList = document.querySelector("#game-list");
 const genreSelect = document.querySelector("#genre-select");
 const searchInput = document.querySelector("#search-input");
 const sortSelect = document.querySelector("#sort-select");
 const gameCount = document.querySelector("#game-count");
 
+// ===== HENT DATA FRA API =====
 fetchGames();
 
 async function fetchGames() {
@@ -27,6 +30,7 @@ async function fetchGames() {
   }
 }
 
+// ===== UDFYLD GENRE DROPDOWN =====
 function populateGenreSelect() {
   const genres = new Set();
 
@@ -52,6 +56,7 @@ function populateGenreSelect() {
   }
 }
 
+// ===== FILTRERING OG SORTERING =====
 function applyFiltersAndSort() {
   const selectedGenre = genreSelect.value;
   const searchValue = searchInput.value.trim().toLowerCase();
@@ -83,6 +88,7 @@ function applyFiltersAndSort() {
   showGames(filteredGames);
 }
 
+// ===== VISNING AF SPIL (LISTE) =====
 function showGames(games) {
   gameList.innerHTML = "";
 
@@ -99,6 +105,7 @@ function showGames(games) {
   }
 }
 
+// ===== OPRET SPILKORT =====
 function showGame(game) {
   const genres = Array.isArray(game.genre)
     ? game.genre.join(", ")
@@ -132,6 +139,7 @@ function showGame(game) {
   });
 }
 
+// ===== DIALOG / POPUP MED SPILINFO =====
 function showGameDialog(game) {
   const dialog = document.querySelector("#game-dialog");
   const content = document.querySelector("#dialog-content");
@@ -144,25 +152,23 @@ function showGameDialog(game) {
     
     <button type="button" class="like-button" id="like-btn" title="Like dette spil">❤</button>
 
-
-
     <img src="${game.image}" style="width:100%; max-height: 300px; object-fit: contain; margin-bottom:10px; border-radius: 8px;" />
 
     <div class="game-details">
         <p><strong>Genre:</strong> ${genres}</p>
         <p><strong>Spillere:</strong> ${players}</p>
-            <p><strong>Alder:</strong> ${game.age}+</p>
-    <p><strong>Spilletid:</strong> ${game.playtime} min</p>
-    <p><strong>Sprog:</strong> ${game.language}</p>
-    <p><strong>Sværhedsgrad:</strong> ${game.difficulty}</p>
-    <p><strong>Rating:</strong> ${game.rating}</p>
-    <p><strong>Lokation:</strong> ${game.location}</p>
-    <p><strong>Hylde:</strong> ${game.shelf}</p>
+        <p><strong>Alder:</strong> ${game.age}+</p>
+        <p><strong>Spilletid:</strong> ${game.playtime} min</p>
+        <p><strong>Sprog:</strong> ${game.language}</p>
+        <p><strong>Sværhedsgrad:</strong> ${game.difficulty}</p>
+        <p><strong>Rating:</strong> ${game.rating}</p>
+        <p><strong>Lokation:</strong> ${game.location}</p>
+        <p><strong>Hylde:</strong> ${game.shelf}</p>
         <p><strong>Beskrivelse:</strong> ${game.description}</p>
     </div>
   `;
 
-  // Logik til at skifte hjertefarve
+  // ===== LIKE-KNAP FUNKTION =====
   const likeBtn = content.querySelector("#like-btn");
   likeBtn.addEventListener("click", () => {
     likeBtn.classList.toggle("liked");
@@ -171,14 +177,14 @@ function showGameDialog(game) {
   dialog.showModal();
 }
 
-// luk dialog
+// ===== LUK DIALOG =====
 document
   .querySelector("#close-dialog")
   .addEventListener("click", () => {
     document.querySelector("#game-dialog").close();
   });
 
-// events
+// ===== EVENT LISTENERS (BRUGERINPUT) =====
 genreSelect.addEventListener("change", applyFiltersAndSort);
 searchInput.addEventListener("input", applyFiltersAndSort);
 sortSelect.addEventListener("change", applyFiltersAndSort);
